@@ -17,10 +17,6 @@ const typeDefs = `
         similar: [Movie]
     }
 
-    type Genre {
-        name: String!
-    }
-
     type Query {
         movies(subString: String!, limit: Int!): [Movie],
         genres(subString: String!): [Genre]
