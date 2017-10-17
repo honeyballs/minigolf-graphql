@@ -2,6 +2,7 @@
 
 //Import custom scalars
 import GraphQLLong from 'graphql-type-long';
+import UnixDate from 'graphql-types-unix-timestamp';
 
 //Import the neo4j driver
 import { v1 as neo4j } from "neo4j-driver";
@@ -12,8 +13,9 @@ let driver = neo4j.driver(
   neo4j.auth.basic("neo4j", "passwort")
 );
 
-const resolveFunctions = {
-  Long: GraphQLLong,
+const resolveFunctionsGraph = {
+  LONG: GraphQLLong,
+  TIMESTAMP: UnixDate,
   Query: {
     //Define the resolver for the queries
     
@@ -31,4 +33,4 @@ const resolveFunctions = {
   }
 };
 
-export default resolveFunctions;
+export default resolveFunctionsGraph;

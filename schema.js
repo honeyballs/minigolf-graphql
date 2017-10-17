@@ -2,7 +2,7 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 //Import resolvers
-import resolversGraph from './resolversGraph';
+import resolveFunctionsGraph from './resolversGraph';
 
 //Example schema
 /*
@@ -33,19 +33,22 @@ const typeDefs = `
 `;*/
 
 const typeDefs = `
+    scalar LONG
+    scalar TIMESTAMP
+
     type User {
         id: ID!
         name: String
         email: String
         passwordHash: String
-        birthday: Long
+        birthday: LONG
         gender: String
         regKey: String
         active: Int
         role: Int
         logins: Int
         club_id: Int
-        registration: Timestamp
+        registration: TIMESTAMP
         club: Club
         friends: [User]
     }
@@ -77,7 +80,7 @@ const typeDefs = `
 
     type Round {
         id: ID!
-        date: Long
+        date: LONG
         user_id: Int
         name: String
         course_id: Int
@@ -98,7 +101,7 @@ const typeDefs = `
         name: String
         type: Int
         info: String
-        courses: [Cours]
+        courses: [Course]
     }
 
     type Gallery {
@@ -112,24 +115,19 @@ const typeDefs = `
         name: String
         tries: Int
         time: Int
-        timestamp: Timestamp
+        timestamp: TIMESTAMP
     }
 
     type Query {
         users: [User]
     }
 
-    type Mutation {
-
-    }
-
     schema {
         query: Query
-        mutation: Mutation
     }
 `;
 
 export default makeExecutableSchema({
     typeDefs: typeDefs,
-    resolversGraph
+    resolveFunctionsGraph
 });
