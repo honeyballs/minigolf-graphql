@@ -1347,3 +1347,15 @@ Storage files: (filename : modification date - size)
 2017-10-17 10:34:02.440+0000 INFO [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by scheduler for time threshold [13]:  Check pointing completed
 2017-10-17 10:34:02.440+0000 INFO [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
 2017-10-17 10:34:02.440+0000 INFO [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-10-17 10:50:56.888+0000 INFO [o.n.k.i.f.GraphDatabaseFacadeFactory] Shutdown started
+2017-10-17 10:50:56.888+0000 INFO [o.n.k.i.f.GraphDatabaseFacadeFactory] Database is now unavailable
+2017-10-17 10:50:56.896+0000 INFO [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [13]:  Starting check pointing...
+2017-10-17 10:50:56.896+0000 INFO [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [13]:  Starting store flush...
+2017-10-17 10:50:56.901+0000 INFO [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [13]:  Store flush completed
+2017-10-17 10:50:56.901+0000 INFO [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [13]:  Starting appending check point entry into the tx log...
+2017-10-17 10:50:56.903+0000 INFO [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [13]:  Appending check point entry into the tx log completed
+2017-10-17 10:50:56.904+0000 INFO [o.n.k.i.t.l.c.CheckPointerImpl] Check Pointing triggered by database shutdown [13]:  Check pointing completed
+2017-10-17 10:50:56.904+0000 INFO [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Starting log pruning.
+2017-10-17 10:50:56.905+0000 INFO [o.n.k.i.t.l.p.LogPruningImpl] Log Rotation [0]:  Log pruning complete.
+2017-10-17 10:50:56.972+0000 INFO [o.n.k.i.DiagnosticsManager] --- STOPPING diagnostics START ---
+2017-10-17 10:50:56.972+0000 INFO [o.n.k.i.DiagnosticsManager] --- STOPPING diagnostics END ---
