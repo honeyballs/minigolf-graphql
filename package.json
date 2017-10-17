@@ -4,7 +4,9 @@
   "description": "A server to test the GraphQL protocol for a minigolf homepage",
   "main": "server.js",
   "babel": {
-    "presets": ["es2015"]
+    "presets": [
+      "es2015"
+    ]
   },
   "scripts": {
     "start": "nodemon ./server.js --exec babel-node",
@@ -27,6 +29,7 @@
     "graphql": "^0.11.7",
     "graphql-server-express": "^1.1.6",
     "graphql-tools": "^2.4.0",
+    "graphql-type-long": "0.0.2",
     "neo4j-driver": "^1.4.1",
     "nodemon": "^1.12.1"
   }

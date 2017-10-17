@@ -38,7 +38,7 @@ const typeDefs = `
         name: String
         email: String
         passwordHash: String
-        birthday: Date
+        birthday: Long
         gender: String
         regKey: String
         active: Int
@@ -62,7 +62,7 @@ const typeDefs = `
         Breitengrad: Float
         Laengengrad: Float
         PLZ: Int
-        Straße: String
+        Strasse: String
         Hausnummer: String
         Stadt: String
         info: String
@@ -77,7 +77,7 @@ const typeDefs = `
 
     type Round {
         id: ID!
-        date: Date
+        date: Long
         user_id: Int
         name: String
         course_id: Int

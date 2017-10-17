@@ -1,5 +1,8 @@
 //Each GraphQL Field must be resolved via a resolver function
 
+//Import custom scalars
+import GraphQLLong from 'graphql-type-long';
+
 //Import the neo4j driver
 import { v1 as neo4j } from "neo4j-driver";
 
@@ -10,10 +13,21 @@ let driver = neo4j.driver(
 );
 
 const resolveFunctions = {
+  Long: GraphQLLong,
   Query: {
     //Define the resolver for the queries
-    //params contains the values for substring and limit parameters
     
+    //Resolver to get all users
+    users() {
+      let session = driver.session();
+      let query =
+        "MATCH (user:User) RETURN user;";
+      return session.run(query, params).then(result => {
+        return result.records.map(record => {
+          return record.get("user").properties;
+        });
+      });
+    }
   }
 };
 
