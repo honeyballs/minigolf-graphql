@@ -13,14 +13,12 @@ let driver = neo4j.driver(
   neo4j.auth.basic("neo4j", "passwort")
 );
 
-const resolveFunctionsGraph = {
-  LONG: GraphQLLong,
-  TIMESTAMP: UnixDate,
+const resolveFunctions = {
   Query: {
     //Define the resolver for the queries
-    
+
     //Resolver to get all users
-    users() {
+    users(_, params) {
       let session = driver.session();
       let query =
         "MATCH (user:User) RETURN user;";
@@ -28,9 +26,13 @@ const resolveFunctionsGraph = {
         return result.records.map(record => {
           return record.get("user").properties;
         });
+      }).catch( error => {
+        console.error( error.stack )
       });
     }
-  }
+  },
+  LONG: GraphQLLong,
+  TIMESTAMP: UnixDate
 };
 
-export default resolveFunctionsGraph;
+export default resolveFunctions;

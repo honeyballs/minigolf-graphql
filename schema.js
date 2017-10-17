@@ -2,7 +2,7 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 //Import resolvers
-import resolveFunctionsGraph from './resolversGraph';
+import resolvers from './resolversGraph';
 
 //Example schema
 /*
@@ -129,5 +129,5 @@ const typeDefs = `
 
 export default makeExecutableSchema({
     typeDefs: typeDefs,
-    resolveFunctionsGraph
+    resolvers
 });
