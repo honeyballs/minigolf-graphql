@@ -11,10 +11,4 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-*.log
-
-<<<<<<< HEAD
-=======
-/nbproject/private/
-package-lock.json
->>>>>>> origin/master
+debug.log
