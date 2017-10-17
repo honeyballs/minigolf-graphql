@@ -2,7 +2,7 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 //Import resolvers
-import resolvers from './resolversGraph';
+import resolversGraph from './resolversGraph';
 
 //Movie Schema
 const typeDefs = `
@@ -29,5 +29,5 @@ const typeDefs = `
 
 export default makeExecutableSchema({
     typeDefs: typeDefs,
-    resolvers
+    resolversGraph
 });
