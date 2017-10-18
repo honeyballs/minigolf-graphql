@@ -33,9 +33,11 @@ const typeDefs = `
 `;*/
 
 const typeDefs = `
+    # Define custom types
     scalar LONG
     scalar TIMESTAMP
 
+    # Define tables
     type User {
         id: ID!
         name: String
@@ -118,8 +120,18 @@ const typeDefs = `
         timestamp: TIMESTAMP
     }
 
+    # Define select queries
     type Query {
+        # Queries without parameters
         users: [User]
+
+        # Queries with parameters
+        # queryname(parameter1: String!, parameter2: Int!): [User]
+    }
+
+    # Define CRUD operations
+    type Mutations {
+        # exactly like queries
     }
 
     schema {
