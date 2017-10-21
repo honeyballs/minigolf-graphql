@@ -2,7 +2,11 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 //Import resolvers
-import resolvers from './resolversGraph';
+//import resolvers from './resolversGraph';
+import getResolvers from './resolversMongo';
+
+
+
 
 //Example schema
 /*
@@ -58,7 +62,7 @@ const typeDefs = `
     type Club {
         id: ID!
         name: String
-    } 
+    }
 
     type Course {
         id: ID!
@@ -96,7 +100,7 @@ const typeDefs = `
         hole: Int
         strokes: Int
         round: Round
-    }    
+    }
 
     type Line {
         id: ID!
@@ -130,16 +134,25 @@ const typeDefs = `
     }
 
     # Define CRUD operations
-    type Mutations {
+    #type Mutations {
         # exactly like queries
-    }
+    #}
 
     schema {
         query: Query
     }
 `;
 
-export default makeExecutableSchema({
-    typeDefs: typeDefs,
-    resolvers
-});
+
+
+
+
+
+
+export default async ()=>{
+  let resolvers = await getResolvers()
+  return makeExecutableSchema({
+      typeDefs: typeDefs,
+      resolvers
+  });
+}
