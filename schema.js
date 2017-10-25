@@ -108,23 +108,47 @@ const typeDefs = `
         text: String
     }
 
-
     # Define select queries
     type Query {
         # Queries without parameters
         users: [User]
+        clubs: [Club]
+        courses: [Course]
+        coursetypes: [Coursetype]
+        rounds: [Round]
+        holes: [Hole]
+        lines: [Line]
+        galleries: [Gallery]
 
         # Queries with parameters
         # queryname(parameter1: String!, parameter2: Int!): [User]
     }
 
     # Define CRUD operations
-    # type Mutations {
-        # exactly like queries
-    # }
+    type Mutations {
+        # Inserts
+        createRound(userId: Int!, courseId: Int!, date: LONG): Boolean
+        createHole(roundId: Int!, hole: Int, strokes: Int): Boolean
+        registerUser(email: String, name: String, password: String, birthday: LONG, gender: String): Boolean
+        # zu user automatisch: id generieren, regkey, logins auf 0 setzen, registration timestamp, beziehung zu club bzw. club id
+        createGallery(image: String, text: String): Boolean
+        createCourse(name: String, breitengrad: Float, laengengrad: Float, info: String, courseTypeId: Int): Boolean
+        
+        # Connect tables
+        addFriend(id: Int!, email: String!): Boolean
+        addLineForCourse(courseId: Int!, lineId: Int!): Boolean
+
+        # Update
+        setLine(courseId: Int!, lineId: Int!): Boolean # Beziehung setzen zwischen courses und lines
+
+        # Delete
+        deleteRound(roundId: Int!, userId: Int!): Boolean
+        deleteLineFromCourse(lineId: Int!, courseId: Int!): Boolean
+    }
 
     schema {
         query: Query
+        mutation: Mutations
     }
 `;
 

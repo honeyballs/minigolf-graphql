@@ -9,7 +9,6 @@ import getSchema from './schema';
 const app = express().use('*', cors());
 
 getSchema().then(schema=>{
-    console.log(schema)
   app.use('/graphql', bodyParser.json(), graphqlExpress({
       schema,
       context: {}
