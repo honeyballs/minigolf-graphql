@@ -37,6 +37,5 @@ export default async function() {
     LONG: GraphQLLong,
     TIMESTAMP: UnixDate
   };
-
   return resolver;
 }

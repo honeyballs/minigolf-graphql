@@ -2,11 +2,8 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 //Import resolvers
-import getResolvers from './resolversMongo';
+//import getResolvers from './resolversMongo';
 import getResolvers from './resolversGraph';
-
-
-
 
 //Example schema
 /*
@@ -133,7 +130,7 @@ const typeDefs = `
 
 export default async () => {
     let resolvers = await getResolvers()
-    makeExecutableSchema({
+    return makeExecutableSchema({
         typeDefs: typeDefs,
         resolvers
     });
