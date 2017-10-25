@@ -15,6 +15,11 @@ export default async function() {
   );
 
   const resolver = {
+    User: {
+      club(user){
+        //Neo4j Stuff
+      }
+    },
     Query: {
       //Define the resolver for the queries
 
