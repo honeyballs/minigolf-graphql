@@ -49,7 +49,6 @@ const typeDefs = `
         active: Int
         role: Int
         logins: Int
-        club_id: Int
         registration: TIMESTAMP
         club: Club
         friends: [User]
@@ -63,7 +62,6 @@ const typeDefs = `
     type Course {
         id: ID!
         name: String
-        type: Int
         Breitengrad: Float
         Laengengrad: Float
         PLZ: Int
@@ -83,16 +81,13 @@ const typeDefs = `
     type Round {
         id: ID!
         date: LONG
-        user_id: Int
         name: String
-        course_id: Int
         user: User
         course: Course
     }
 
     type Hole {
         id: ID!
-        round_id: Int
         hole: Int
         strokes: Int
         round: Round
@@ -101,9 +96,9 @@ const typeDefs = `
     type Line {
         id: ID!
         name: String
-        type: Int
         info: String
         courses: [Course]
+        type: Coursetype
     }
 
     type Gallery {
@@ -112,13 +107,6 @@ const typeDefs = `
         text: String
     }
 
-    type ResultsPairs {
-        id: ID!
-        name: String
-        tries: Int
-        time: Int
-        timestamp: TIMESTAMP
-    }
 
     # Define select queries
     type Query {
@@ -130,9 +118,9 @@ const typeDefs = `
     }
 
     # Define CRUD operations
-    type Mutations {
+    # type Mutations {
         # exactly like queries
-    }
+    # }
 
     schema {
         query: Query
