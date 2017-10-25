@@ -2,7 +2,11 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 //Import resolvers
+import getResolvers from './resolversMongo';
 import getResolvers from './resolversGraph';
+
+
+
 
 //Example schema
 /*
@@ -57,7 +61,7 @@ const typeDefs = `
     type Club {
         id: ID!
         name: String
-    } 
+    }
 
     type Course {
         id: ID!
@@ -91,7 +95,7 @@ const typeDefs = `
         hole: Int
         strokes: Int
         round: Round
-    }    
+    }
 
     type Line {
         id: ID!
