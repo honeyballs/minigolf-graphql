@@ -31,7 +31,11 @@ export default async function() {
           .run(query, params)
           .then(result => {
             return result.records.map(record => {
-              return record.get("user").properties;
+              //Integrate the id into the result
+              let userData = record.get("user").properties
+              let userId = record.get("user").identity
+              let returnValue = { ...userData, id: userId }
+              return returnValue;
             });
           })
           .catch(error => {
