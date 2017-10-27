@@ -31,6 +31,8 @@ export default async function() {
           .run(query, params)
           .then(result => {
             return result.records.map(record => {
+              session.close()
+              driver.close()
               //Integrate the id into the result
               let userData = record.get("user").properties
               let userId = record.get("user").identity
@@ -41,6 +43,52 @@ export default async function() {
           .catch(error => {
             console.error(error.stack);
           });
+      },
+      clubs(_, params) {
+        let session = driver.session();
+        let query = "MATCH (club:Club) RETURN club;";
+        return session
+          .run(query, params)
+          .then(result => {
+            return result.records.map(record => {
+              session.close()
+              driver.close()
+              //Integrate the id into the result
+              let clubData = record.get("club").properties
+              let clubId = record.get("club").identity
+              let returnValue = { ...userData, id: userId }
+              return returnValue;
+            });
+          })
+          .catch(error => {
+            console.error(error.stack);
+          });
+      }
+    },
+    Mutation: {
+      registerUser(_, params) {
+        let session = driver.session()
+        let query = `
+          CREATE (user:User {
+            name: $name, 
+            email: $email, 
+            passwordHash: $passwordHash,
+            role: 1,
+            gender: 'm',
+            registration: TIMESTAMP(),
+            active: 1,
+            logins: 0,
+            birthday: 373030177000,
+            regKey: 'regkey??'
+          }) RETURN CASE WHEN user IS NULL THEN false ELSE true END
+        `
+        return session.run(query, params).then( result => {
+          return result.records.map( record => {
+            return record;
+          })
+        }).catch( error => {
+          console.error(error.stack)
+        })
       }
     },
     LONG: GraphQLLong,

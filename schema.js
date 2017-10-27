@@ -125,15 +125,16 @@ const typeDefs = `
     }
 
     # Define CRUD operations
-    type Mutations {
-        # Inserts
+    type Mutation {
+        # Inserts, generate ids in resolver/via auto_increment
         createRound(userId: Int!, courseId: Int!, date: LONG): Boolean
         createHole(roundId: Int!, hole: Int, strokes: Int): Boolean
-        registerUser(email: String, name: String, password: String, birthday: LONG, gender: String): Boolean
+        registerUser(email: String!, name: String!, passwordHash: String!): Boolean
         # zu user automatisch: id generieren, regkey, logins auf 0 setzen, registration timestamp, beziehung zu club bzw. club id
         createGallery(image: String, text: String): Boolean
         createCourse(name: String, breitengrad: Float, laengengrad: Float, info: String, courseTypeId: Int): Boolean
-        
+        createCourseType(type: String!)
+
         # Connect tables
         addFriend(id: Int!, email: String!): Boolean
         addLineForCourse(courseId: Int!, lineId: Int!): Boolean
@@ -148,7 +149,7 @@ const typeDefs = `
 
     schema {
         query: Query
-        mutation: Mutations
+        mutation: Mutation
     }
 `;
 
