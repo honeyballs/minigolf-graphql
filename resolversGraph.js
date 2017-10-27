@@ -32,7 +32,6 @@ export default async function() {
           .then(result => {
             return result.records.map(record => {
               session.close()
-              driver.close()
               //Integrate the id into the result
               let userData = record.get("user").properties
               let userId = record.get("user").identity
@@ -52,11 +51,29 @@ export default async function() {
           .then(result => {
             return result.records.map(record => {
               session.close()
-              driver.close()
               //Integrate the id into the result
               let clubData = record.get("club").properties
               let clubId = record.get("club").identity
-              let returnValue = { ...userData, id: userId }
+              let returnValue = { ...clubData, id: clubId }
+              return returnValue;
+            });
+          })
+          .catch(error => {
+            console.error(error.stack);
+          });
+      },
+      coursetypes(_, params) {
+        let session = driver.session();
+        let query = "MATCH (ct:Coursetype) RETURN ct;";
+        return session
+          .run(query, params)
+          .then(result => {
+            return result.records.map(record => {
+              session.close()
+              //Integrate the id into the result
+              let ctData = record.get("ct").properties
+              let ctId = record.get("ct").identity
+              let returnValue = { ...ctData, id: ctId }
               return returnValue;
             });
           })
@@ -84,6 +101,43 @@ export default async function() {
         `
         return session.run(query, params).then( result => {
           return result.records.map( record => {
+            session.close()
+            return record;
+          })
+        }).catch( error => {
+          console.error(error.stack)
+        })
+      },
+      createCourseType(_, params) {
+        let session = driver.session()
+        let query = `
+          CREATE (ct:Coursetype {
+            type: $type
+          }) RETURN CASE WHEN ct IS NULL THEN false ELSE true END
+        `
+        return session.run(query, params).then( result => {
+          return result.records.map( record => {
+            session.close()
+            return record;
+          })
+        }).catch( error => {
+          console.error(error.stack)
+        })
+      },
+      createCourse(_, params) {
+        let session = driver.session()
+        let query = `
+          MATCH (ct:Coursetype) WHERE ID(ct) = $courseTypeId
+          CREATE (course:Course {
+            name: $name,
+            breitengrad: $breitengrad,
+            laengengrad: $laengengrad,
+            info: $info
+          })-[:TYPE_OF]->(ct) RETURN CASE WHEN course IS NULL THEN false ELSE true END
+        `
+        return session.run(query, params).then( result => {
+          return result.records.map( record => {
+            session.close()
             return record;
           })
         }).catch( error => {

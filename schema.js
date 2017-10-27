@@ -132,7 +132,7 @@ const typeDefs = `
         registerUser(email: String!, name: String!, passwordHash: String!): Boolean
         # zu user automatisch: id generieren, regkey, logins auf 0 setzen, registration timestamp, beziehung zu club bzw. club id
         createGallery(image: String, text: String): Boolean
-        createCourse(name: String, breitengrad: Float, laengengrad: Float, info: String, courseTypeId: Int): Boolean
+        createCourse(name: String!, breitengrad: Float, laengengrad: Float, info: String, courseTypeId: Int!): Boolean
         createCourseType(type: String!): Boolean
 
         # Connect tables
