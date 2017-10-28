@@ -80,6 +80,61 @@ export default async function() {
           .catch(error => {
             console.error(error.stack);
           });
+      },
+      // courses(_, params) {
+      //   let session = driver.session();
+      //   let query = "MATC (course:Course) RETURN course;";
+      //   return session
+      //     .run(query, params)
+      //     .then(result => {
+      //       session.close()
+      //       let r = addRecordID(result.records,"course")
+      //       console.log(r);
+      //       return r;
+      //     })
+      //     .catch(error => {
+      //       console.error(error.stack);
+      //     });
+      // },
+      courses(_, params) {
+        return getAllRecords(driver,params,"Course")
+          .then(result => {
+            return result})
+          .catch(error => {
+            console.log(error.stack);
+          });
+      },
+      rounds(_, params) {
+        return getAllRecords(driver,params,"Round")
+          .then(result => {
+            return result})
+          .catch(error => {
+            console.log(error.stack);
+          });
+      },
+      holes(_, params) {
+        return getAllRecords(driver,params,"Hole")
+          .then(result => {
+            return result})
+          .catch(error => {
+            console.log(error.stack);
+          });
+      },
+      lines(_, params) {
+        return getAllRecords(driver,params,"Line")
+          .then(result => {
+            return result})
+          .catch(error => {
+            console.log(error.stack);
+          });
+      },
+      galleries(_, params) {
+        return getAllRecords(driver,params,"Gallery")
+          .then(result => {
+            return result})
+          .catch(error => {
+            console.log(error.stack);
+          });
       }
     },
     Mutation: {
@@ -143,10 +198,124 @@ export default async function() {
         }).catch( error => {
           console.error(error.stack)
         })
+      },
+      // createClub ??
+      createGallery(_, params) {
+        return setMutation(driver,params,"gallery",
+          ` CREATE (gallery:Gallery {
+              image: $image,
+              text: $text
+            })`)
+          .then(result => { return result })
+          .catch(error => { console.log(error.stack) })
+      },
+      createRound(_, params) {
+        return setMutation(driver,params,"round",`
+          MATCH (u:User) WHERE ID(u) = $userId
+          MATCH (c:Course) WHERE ID(c) = $courseId
+          CREATE (round:Round {
+            date: $date
+          })-[:PLAYED_BY]->(u)
+          CREATE (round)-[:PLAYED_ON]->(c)`)
+          .then(result => { return result })
+          .catch(error => { console.log(error.stack) })
+      },
+      createHole(_, params) {
+        return setMutation(driver,params,"hole",`
+          MATCH (r:Round) WHERE ID(r) = $roundId
+          CREATE (hole:Hole {
+            hole: $hole,
+            strokes: $strokes
+          })-[:PLAYED_IN]->(r)`)
+          .then(result => { return result })
+          .catch(error => { console.log(error.stack) })
+      },
+      createLine(_, params) {
+        return setMutation(driver,params,"line",`
+          MATCH (ct:Coursetype) WHERE ID(ct) = $courseTypeId
+          CREATE (line:Line {
+            name: $name,
+            info: $info
+          })-[:TYPE_OF]->(ct)`)
+          .then(result => { return result })
+          .catch(error => { console.log(error.stack) })
+      },
+      addFriend(_, params) {
+        return setMutation(driver,params,"",`
+          MATCH (u:User) WHERE ID(u) = $id
+          MATCH (friend:User {email: $email})
+          CREATE (u)-[:IS_FRIEND]->(friend)`)
+          .then(result => { return result })
+          .catch(error => { console.log(error.stack) })
+      },
+      addLineForCourse(_, params) {
+        return setMutation(driver,params,"",`
+          MATCH (c:Course) WHERE ID(c) = $courseId
+          MATCH (l:Line) WHERE ID(l) = $lineId
+          CREATE (c)-[:IN_COURSE]->(l)`)
+          .then(result => { return result })
+          .catch(error => { console.log(error.stack) })
+      },
+      // does delete always return null?
+      deleteRound(_,params) {
+        return setMutation(driver,params,"round",`
+          MATCH (round:Round)-[:PLAYED_BY]->(u:User) WHERE ID(round) = $roundId AND ID(u) = $userId
+          DETACH DELETE round`)
+          .then(result => { return result })
+          .catch(error => { console.log(error.stack) })
+      },
+      deleteLineFromCourse(_,params) {
+        return setMutation(driver,params,"relation",`
+          MATCH (c:Course)-[relation:IN_COURSE]->(l:Line) WHERE ID(c) = $courseId AND ID(l) = $lineId
+          DETACH DELETE relation`)
+          .then(result => { return result })
+          .catch(error => { console.log(error.stack) })
       }
     },
     LONG: GraphQLLong,
     TIMESTAMP: UnixDate
   };
   return resolver;
+}
+
+function addRecordID(records,typeName) {
+  return records.map(record => {          
+    //Integrate the id into the result
+    return { ...record.get(typeName).properties, id: record.get(typeName).identity};
+  });
+}
+
+function getAllRecords(driver,params,typeName) {
+  try{
+    let session = driver.session();
+    let query = "MATCH (name:"+typeName+") RETURN name;";
+    return session
+      .run(query, params)
+      .then(result => {
+        session.close()
+        return addRecordID(result.records,"name");
+      })
+      .catch(error => {
+        throw error;
+      });
+  }catch (e){
+    // console.log(error.stack);
+  }
+}
+
+function setMutation(driver,params,typeName,query) {
+  try{
+    let session = driver.session();
+    if (typeName !="") query += ` RETURN CASE WHEN `+typeName+` IS NULL THEN false ELSE true END`
+    return session.run(query, params).then( result => {
+      return result.records.map( record => {
+        session.close()
+        return record;
+      })
+    }).catch( error => {
+      throw error;
+    })
+  }catch (e){
+    console.log(error.stack);
+  }
 }

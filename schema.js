@@ -135,11 +135,14 @@ const typeDefs = `
         createCourse(name: String!, breitengrad: Float, laengengrad: Float, info: String, courseTypeId: Int!): Boolean
         createCourseType(type: String!): Boolean
 
+        createLine(name: String!, info: String!, courseTypeId: Int!): Boolean
+
         # Connect tables
         addFriend(id: Int!, email: String!): Boolean
         addLineForCourse(courseId: Int!, lineId: Int!): Boolean
 
         # Update
+        # Unterschied: addLineForCourse - setLine ?
         setLine(courseId: Int!, lineId: Int!): Boolean # Beziehung setzen zwischen courses und lines
 
         # Delete
