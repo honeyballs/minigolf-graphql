@@ -2,8 +2,8 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 //Import resolvers
-//import getResolvers from './resolversMongo';
-import getResolvers from './resolversGraph';
+import getResolvers from './resolversMongo';
+//import getResolvers from './resolversGraph';
 
 //Example schema
 /*
@@ -162,4 +162,4 @@ export default async () => {
         typeDefs: typeDefs,
         resolvers
     });
-} 
+}
