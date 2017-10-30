@@ -15,6 +15,14 @@ export default async()=>{
 
   const db = await MongoClient.connect(MONGO_URL)
   const User = db.collection('user')
+  const Clubs = db.collection('clubs')
+  const Coursetype = db.collection('cousetype')
+
+  //trasnform _id from  an ObjectId into a string
+  const prepare = (o) =>{
+    o._id = o._id.toString()
+    return o
+  }
 
   return {
     Query: {
@@ -22,12 +30,26 @@ export default async()=>{
 
       //Resolver to get all users
       users:async (_, params) => {
-        return (await User.find({}).toArray()).map((o) => {
-          o._id = o._id.toString()
-          return o
-        })
-
-      }
+        return (await User.find({}).toArray()).map(prepare)
+      },
+      clubs:async (_, params) => {
+        return (await Clubs.find({}).toArray()).map(prepare)
+      },
+      coursetypes:async (_, params) => {
+        return (await Coursetype.find({}).toArray()).map(prepare)
+      },
+    },
+    Mutation: {
+      registerUser: async (root, args, context, info) => {
+        let modArgs = {...args, role:1, gender: 'm',
+          registration: (new Date()).getTime(), active: 1, logins: 0, birthday: 373030177000}
+        const res = await User.insert(modArgs)
+        return (res && res.result && res.result.ok)
+      },
+      createCourseType: async(root, args, context, info) => {
+        const res = await Coursetype.insert(args)
+        return (res && res.result && res.result.ok)
+      },
     },
     LONG: GraphQLLong,
     TIMESTAMP: UnixDate
