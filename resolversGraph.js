@@ -17,7 +17,48 @@ export default async function() {
   const resolver = {
     User: {
       club(user){
-        //Neo4j Stuff
+        let params = {id: user.id}
+        return resolveTypes(driver, params, "User", "IS_IN", "Club")
+      },
+      friends(user) {
+        let params= {id: user.id}
+        return resolveTypes(driver, params, "User", "IS_FRIEND", "User")
+      }
+    },
+    Course: {
+      type(course) {
+        let params = {id: course.id}
+        return resolveTypes(driver, params, "Course", "TYPE_OF", "Coursetype")
+      },
+      lines(course) {
+        let params = {id: course.id}
+        return resolveTypes(driver, params, "Course", "IN_COURSE", "Line")
+      }
+    },
+    Round: {
+      user(round) {
+        let params = {id: round.id}
+        return resolveTypes(driver, params, "Round", "PLAYED_BY", "User")
+      },
+      course(round) {
+        let params = {id: round.id}
+        return resolveTypes(driver, params, "Round", "PLAYED_ON", "Course")
+      }
+    },
+    Hole: {
+      round(hole) {
+        let params = {id: hole.id}
+        return resolveTypes(driver, params, "Hole", "PLAYED_IN", "Round")
+      }
+    },
+    Line: {
+      courses(line) {
+        let params = {id: line.id}
+        return resolveTypes(driver, params, "Line", "IN_COURSE", "Course")
+      },
+      type(line) {
+        let params = {id: line.id}
+        return resolveTypes(driver, params, "Line", "TYPE_OF", "Coursetype")
       }
     },
     Query: {
@@ -26,67 +67,27 @@ export default async function() {
       //Resolver to get all users
       users(_, params) {
         return getAllRecords(driver,params,"User")
-          .then(result => {
-            return result})
-          .catch(error => {
-            console.log(error.stack);
-          });
       },
       clubs(_, params) {
         return getAllRecords(driver,params,"Club")
-          .then(result => {
-            return result})
-          .catch(error => {
-            console.log(error.stack);
-          });
       },
       coursetypes(_, params) {
         return getAllRecords(driver,params,"Coursetype")
-          .then(result => {
-            return result})
-          .catch(error => {
-            console.log(error.stack);
-          });
       },
       courses(_, params) {
         return getAllRecords(driver,params,"Course")
-          .then(result => {
-            return result})
-          .catch(error => {
-            console.log(error.stack);
-          });
       },
       rounds(_, params) {
         return getAllRecords(driver,params,"Round")
-          .then(result => {
-            return result})
-          .catch(error => {
-            console.log(error.stack);
-          });
       },
       holes(_, params) {
         return getAllRecords(driver,params,"Hole")
-          .then(result => {
-            return result})
-          .catch(error => {
-            console.log(error.stack);
-          });
       },
       lines(_, params) {
         return getAllRecords(driver,params,"Line")
-          .then(result => {
-            return result})
-          .catch(error => {
-            console.log(error.stack);
-          });
       },
       galleries(_, params) {
         return getAllRecords(driver,params,"Gallery")
-          .then(result => {
-            return result})
-          .catch(error => {
-            console.log(error.stack);
-          });
       }
     },
     Mutation: {
@@ -158,8 +159,6 @@ export default async function() {
               image: $image,
               text: $text
             })`)
-          .then(result => { return result })
-          .catch(error => { console.log(error.stack) })
       },
       createRound(_, params) {
         return setMutation(driver,params,"round",`
@@ -169,8 +168,6 @@ export default async function() {
             date: $date
           })-[:PLAYED_BY]->(u)
           CREATE (round)-[:PLAYED_ON]->(c)`)
-          .then(result => { return result })
-          .catch(error => { console.log(error.stack) })
       },
       createHole(_, params) {
         return setMutation(driver,params,"hole",`
@@ -179,8 +176,6 @@ export default async function() {
             hole: $hole,
             strokes: $strokes
           })-[:PLAYED_IN]->(r)`)
-          .then(result => { return result })
-          .catch(error => { console.log(error.stack) })
       },
       createLine(_, params) {
         return setMutation(driver,params,"line",`
@@ -189,39 +184,29 @@ export default async function() {
             name: $name,
             info: $info
           })-[:TYPE_OF]->(ct)`)
-          .then(result => { return result })
-          .catch(error => { console.log(error.stack) })
       },
       addFriend(_, params) {
         return setMutation(driver,params,"",`
           MATCH (u:User) WHERE ID(u) = $id
           MATCH (friend:User {email: $email})
           CREATE (u)-[:IS_FRIEND]->(friend)`)
-          .then(result => { return result })
-          .catch(error => { console.log(error.stack) })
       },
       addLineForCourse(_, params) {
         return setMutation(driver,params,"",`
           MATCH (c:Course) WHERE ID(c) = $courseId
           MATCH (l:Line) WHERE ID(l) = $lineId
           CREATE (c)-[:IN_COURSE]->(l)`)
-          .then(result => { return result })
-          .catch(error => { console.log(error.stack) })
       },
       // does delete always return null?
       deleteRound(_,params) {
         return setMutation(driver,params,"round",`
           MATCH (round:Round)-[:PLAYED_BY]->(u:User) WHERE ID(round) = $roundId AND ID(u) = $userId
           DETACH DELETE round`)
-          .then(result => { return result })
-          .catch(error => { console.log(error.stack) })
       },
       deleteLineFromCourse(_,params) {
         return setMutation(driver,params,"relation",`
           MATCH (c:Course)-[relation:IN_COURSE]->(l:Line) WHERE ID(c) = $courseId AND ID(l) = $lineId
           DETACH DELETE relation`)
-          .then(result => { return result })
-          .catch(error => { console.log(error.stack) })
       }
     },
     LONG: GraphQLLong,
@@ -231,14 +216,14 @@ export default async function() {
 }
 
 function addRecordID(records,typeName) {
-  return records.map(record => {          
+  return records.map(record => {
+    console.log({ ...record.get(typeName).properties, id: record.get(typeName).identity})        
     //Integrate the id into the result
     return { ...record.get(typeName).properties, id: record.get(typeName).identity};
   });
 }
 
 function getAllRecords(driver,params,typeName) {
-  try{
     let session = driver.session();
     let query = "MATCH (name:"+typeName+") RETURN name;";
     return session
@@ -248,15 +233,27 @@ function getAllRecords(driver,params,typeName) {
         return addRecordID(result.records,"name");
       })
       .catch(error => {
-        throw error;
+        console.log(error.stack);
       });
-  }catch (e){
-    // console.log(error.stack);
-  }
+}
+
+function resolveTypes(driver, params, parentType, relationName, childType) {
+    let session = driver.session()
+    let query = `
+      MATCH (n:${parentType})-[:${relationName}]-(m:${childType}) WHERE ID(n) = $id RETURN m
+    `
+    return session.run(query, params).then( result => {
+      return result.records.map( record => {
+        let returnObj = {...record.get("m").properties, id: record.get("m").identity}
+        session.close()
+        return returnObj;
+      })
+    }).catch( error => {
+      console.log(error.stack)
+    })
 }
 
 function setMutation(driver,params,typeName,query) {
-  try{
     let session = driver.session();
     if (typeName !="") query += ` RETURN CASE WHEN `+typeName+` IS NULL THEN false ELSE true END`
     return session.run(query, params).then( result => {
@@ -265,9 +262,6 @@ function setMutation(driver,params,typeName,query) {
         return record;
       })
     }).catch( error => {
-      throw error;
+      console.log(error.stack)
     })
-  }catch (e){
-    console.log(error.stack);
-  }
 }
