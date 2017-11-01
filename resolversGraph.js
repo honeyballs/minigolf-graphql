@@ -122,7 +122,12 @@ export default async function() {
             info: $info
           })-[:TYPE_OF]->(ct) RETURN CASE WHEN course IS NULL THEN false ELSE true END`)
       },
-      // createClub ??
+      createClub(_, params) {
+        return setMutation(driver,params,`
+          MATCH (club:Club{
+            name: $name
+          }) RETURN CASE WHEN club IS NULL THEN false ELSE true END`)
+      },
       createGallery(_, params) {
         return setMutation(driver,params,`
           CREATE (gallery:Gallery {
@@ -201,7 +206,7 @@ function addRecordID(records,typeName) {
 
 function getAllRecords(driver,params,typeName) {
     let session = driver.session();
-    let query = "MATCH (name:"+typeName+") RETURN name;";
+    let query = `MATCH (name:${typeName}) RETURN name;`;
     return session
       .run(query, params)
       .then(result => {
