@@ -25,77 +25,29 @@ export default async function() {
 
       //Resolver to get all users
       users(_, params) {
-        let session = driver.session();
-        let query = "MATCH (user:User) RETURN user;";
-        return session
-          .run(query, params)
+        return getAllRecords(driver,params,"User")
           .then(result => {
-            return result.records.map(record => {
-              session.close()
-              //Integrate the id into the result
-              let userData = record.get("user").properties
-              let userId = record.get("user").identity
-              let returnValue = { ...userData, id: userId }
-              return returnValue;
-            });
-          })
+            return result})
           .catch(error => {
-            console.error(error.stack);
+            console.log(error.stack);
           });
       },
       clubs(_, params) {
-        let session = driver.session();
-        let query = "MATCH (club:Club) RETURN club;";
-        return session
-          .run(query, params)
+        return getAllRecords(driver,params,"Club")
           .then(result => {
-            return result.records.map(record => {
-              session.close()
-              //Integrate the id into the result
-              let clubData = record.get("club").properties
-              let clubId = record.get("club").identity
-              let returnValue = { ...clubData, id: clubId }
-              return returnValue;
-            });
-          })
+            return result})
           .catch(error => {
-            console.error(error.stack);
+            console.log(error.stack);
           });
       },
       coursetypes(_, params) {
-        let session = driver.session();
-        let query = "MATCH (ct:Coursetype) RETURN ct;";
-        return session
-          .run(query, params)
+        return getAllRecords(driver,params,"Coursetype")
           .then(result => {
-            return result.records.map(record => {
-              session.close()
-              //Integrate the id into the result
-              let ctData = record.get("ct").properties
-              let ctId = record.get("ct").identity
-              let returnValue = { ...ctData, id: ctId }
-              return returnValue;
-            });
-          })
+            return result})
           .catch(error => {
-            console.error(error.stack);
+            console.log(error.stack);
           });
       },
-      // courses(_, params) {
-      //   let session = driver.session();
-      //   let query = "MATC (course:Course) RETURN course;";
-      //   return session
-      //     .run(query, params)
-      //     .then(result => {
-      //       session.close()
-      //       let r = addRecordID(result.records,"course")
-      //       console.log(r);
-      //       return r;
-      //     })
-      //     .catch(error => {
-      //       console.error(error.stack);
-      //     });
-      // },
       courses(_, params) {
         return getAllRecords(driver,params,"Course")
           .then(result => {
