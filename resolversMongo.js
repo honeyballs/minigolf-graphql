@@ -17,6 +17,7 @@ export default async()=>{
   const User = db.collection('user')
   const Clubs = db.collection('clubs')
   const Coursetype = db.collection('cousetype')
+  const Course = db.collection('course')
 
   //trasnform _id from  an ObjectId into a string
   const prepare = (o) =>{
@@ -38,6 +39,9 @@ export default async()=>{
       coursetypes:async (_, params) => {
         return (await Coursetype.find({}).toArray()).map(prepare)
       },
+      courses :async (_, params) => {
+        return (await Course.find({}).toArray()).map(prepare)
+      },
     },
     Mutation: {
       registerUser: async (root, args, context, info) => {
@@ -48,6 +52,12 @@ export default async()=>{
       },
       createCourseType: async(root, args, context, info) => {
         const res = await Coursetype.insert(args)
+        return (res && res.result && res.result.ok)
+      },
+      createCourse: async(root, args, context, info) => {
+        const res = await Course.insert(args)
+        args.course = args.courseTypeId
+        args.courseTypeId = undefined
         return (res && res.result && res.result.ok)
       },
     },

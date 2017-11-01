@@ -1,6 +1,7 @@
 db.createCollection('user')
 db.createCollection('club')
 db.createCollection('coursetype')
+db.createCollection('course')
 
 db.user.insert(
 {
