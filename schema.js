@@ -139,7 +139,7 @@ const typeDefs = `
         createLine(name: String!, info: String!, courseTypeId: Int!): Boolean
 
         # Connect tables
-        addFriend(id: Int!, email: String!): Boolean
+        addFriend(id: String!, email: String!): Boolean
         addLineForCourse(courseId: Int!, lineId: Int!): Boolean
 
         # Update

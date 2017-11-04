@@ -26,3 +26,9 @@ query:
     gender
   }
 }
+
+relations:
+-denormalized (komplette objekt informationen im objekt speichern)
+	-schnell für read
+	-effektiv, wenn sich die Werte gar nicht oder sehr selten ändern
+-normalized (nur die id auf ein anderes objekt im objekt speichern)

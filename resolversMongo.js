@@ -18,6 +18,9 @@ export default async()=>{
   const Clubs = db.collection('clubs')
   const Coursetype = db.collection('cousetype')
   const Course = db.collection('course')
+  const Rounds = db.collection('round')
+  const Holes = db.collection('hole')
+  const Lines = db.collection('line')
 
   //trasnform _id from  an ObjectId into a string
   const prepare = (o) =>{
@@ -31,7 +34,16 @@ export default async()=>{
 
       //Resolver to get all users
       users:async (_, params) => {
-        return (await User.find({}).toArray()).map(prepare)
+        let result = (await User.find({}).toArray()).map(prepare)
+        result = await Promise.all(result.map(async(i)=>{
+          if(!i.friends) return i
+          i.friends = (await Promise.all(i.friends.map(async f=>{
+            let o = await User.findOne({_id: ObjectId(f)})
+            return o
+          }))).filter(i=>{return i!=null})
+          return i
+        }))
+        return result
       },
       clubs:async (_, params) => {
         return (await Clubs.find({}).toArray()).map(prepare)
@@ -41,6 +53,15 @@ export default async()=>{
       },
       courses :async (_, params) => {
         return (await Course.find({}).toArray()).map(prepare)
+      },
+      rounds :async (_, params) => {
+        return (await Rounds.find({}).toArray()).map(prepare)
+      },
+      holes :async (_, params) => {
+        return (await Holes.find({}).toArray()).map(prepare)
+      },
+      lines :async (_, params) => {
+        return (await Lines.find({}).toArray()).map(prepare)
       },
     },
     Mutation: {
@@ -59,6 +80,25 @@ export default async()=>{
         args.course = args.courseTypeId
         args.courseTypeId = undefined
         return (res && res.result && res.result.ok)
+      },
+      createClub: async(root, args, context, info) => {
+        const res = await Clubs.insert(args)
+        return (res && res.result && res.result.ok)
+      },
+      createRound: async(root, args, context, info) => {
+        const res = await Rounds.insert(args)
+        return (res && res.result && res.result.ok)
+      },
+      createHole: async(root, args, context, info) => {
+        const res = await Holes.insert(args)
+        return (res && res.result && res.result.ok)
+      },
+      addFriend: async(root, args, context, info) => {
+        const res = await User.findOne({_id:ObjectId(args.id)})
+        if(!res) return false;
+        const link = await User.findOne({email: args.email})
+        if(!link) return false;
+        return User.updateOne({_id:ObjectId(args.id)}, {$push: {friends: link._id.toString()}})
       },
     },
     LONG: GraphQLLong,
