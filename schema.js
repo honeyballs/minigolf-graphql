@@ -51,7 +51,7 @@ const typeDefs = `
         role: Int
         logins: Int
         registration: TIMESTAMP
-        club: Club
+        club: [Club]
         friends: [User]
     }
 
@@ -71,7 +71,7 @@ const typeDefs = `
         Stadt: String
         info: String
         lines: [Line]
-        type: Coursetype
+        type: [Coursetype]
     }
 
     type Coursetype {
@@ -83,15 +83,15 @@ const typeDefs = `
         id: ID!
         date: LONG
         name: String
-        user: User
-        course: Course
+        user: [User]
+        course: [Course]
     }
 
     type Hole {
         id: ID!
         hole: Int
         strokes: Int
-        round: Round
+        round: [Round]
     }
 
     type Line {
@@ -99,7 +99,7 @@ const typeDefs = `
         name: String
         info: String
         courses: [Course]
-        type: Coursetype
+        type: [Coursetype]
     }
 
     type Gallery {
@@ -134,6 +134,7 @@ const typeDefs = `
         createGallery(image: String, text: String): Boolean
         createCourse(name: String!, breitengrad: Float, laengengrad: Float, info: String, courseTypeId: Int!): Boolean
         createCourseType(type: String!): Boolean
+        createClub(name: String!): Boolean
 
         createLine(name: String!, info: String!, courseTypeId: Int!): Boolean
 
