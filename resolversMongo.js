@@ -16,7 +16,7 @@ export default async()=>{
   const db = await MongoClient.connect(MONGO_URL)
   const User = db.collection('user')
   const Clubs = db.collection('clubs')
-  const Coursetype = db.collection('cousetype')
+  const Coursetype = db.collection('coursetype')
   const Course = db.collection('course')
   const Rounds = db.collection('round')
   const Holes = db.collection('hole')
@@ -52,7 +52,13 @@ export default async()=>{
         return (await Coursetype.find({}).toArray()).map(prepare)
       },
       courses :async (_, params) => {
-        return (await Course.find({}).toArray()).map(prepare)
+        let result = (await Course.find({}).toArray()).map(prepare)
+        result = await Promise.all(result.map(async(i)=>{
+          if(!i.type || !i.type[0]) return i
+          i.type[0] = await Coursetype.findOne({_id: ObjectId(i.type[0])})
+          return i
+        }))
+        return result
       },
       rounds :async (_, params) => {
         return (await Rounds.find({}).toArray()).map(prepare)
@@ -76,9 +82,10 @@ export default async()=>{
         return (res && res.result && res.result.ok)
       },
       createCourse: async(root, args, context, info) => {
+        args.type = []
+        args.type.push(args.courseTypeId)
+        args.courseTypeId = null
         const res = await Course.insert(args)
-        args.course = args.courseTypeId
-        args.courseTypeId = undefined
         return (res && res.result && res.result.ok)
       },
       createClub: async(root, args, context, info) => {
