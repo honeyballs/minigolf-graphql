@@ -23,6 +23,10 @@ export default async function() {
       async friends(user) {
         let params= {id: user.id}
         return resolveTypes(driver, params, "User", "IS_FRIEND", "User")
+      },
+      async rounds(user) {
+        let params= {id: user.id}
+        return resolveTypes(driver, params, "User", "PLAYED_BY", "Round")
       }
     },
     Course: {
@@ -33,6 +37,10 @@ export default async function() {
       async lines(course) {
         let params = {id: course.id}
         return resolveTypes(driver, params, "Course", "IN_COURSE", "Line")
+      },
+      async rounds(course) {
+        let params = {id: course.id}
+        return resolveTypes(driver, params, "Course", "PLAYED_ON", "Round")
       }
     },
     Round: {

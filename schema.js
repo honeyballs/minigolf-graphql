@@ -53,6 +53,7 @@ const typeDefs = `
         registration: TIMESTAMP
         club: [Club]
         friends: [User]
+        rounds: [Round]
     }
 
     type Club {
@@ -72,6 +73,7 @@ const typeDefs = `
         info: String
         lines: [Line]
         type: [Coursetype]
+        rounds: [Round]
     }
 
     type Coursetype {
@@ -122,6 +124,7 @@ const typeDefs = `
 
         # Queries with parameters
         getUser(userId: Int!): [User]
+        getHosts()
         # queryname(parameter1: String!, parameter2: Int!): [User]
     }
 
