@@ -136,11 +136,11 @@ const typeDefs = `
         createCourseType(type: String!): Boolean
         createClub(name: String!): Boolean
 
-        createLine(name: String!, info: String!, courseTypeId: Int!): Boolean
+        createLine(name: String!, info: String!, courseTypeId: String!): Boolean
 
         # Connect tables
         addFriend(id: String!, email: String!): Boolean
-        addLineForCourse(courseId: Int!, lineId: Int!): Boolean
+        addLineForCourse(courseId: String!, lineId: String!): Boolean
 
         # Update
         # Unterschied: addLineForCourse - setLine ?
