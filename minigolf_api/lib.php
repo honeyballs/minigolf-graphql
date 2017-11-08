@@ -2,56 +2,62 @@
 $mysqli;
 $messages = "";
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 define("salt", "A908sd780sjasdf2kzx3");
 
-function addMessage( $message ) {
-	global $messages;
-	$messages .= "<span> $message </span>";
+function getGraphQL($query) {
+	$data = array("query" => $query);
+	$data_string = json_encode($data);
+
+	$ch = curl_init("http://localhost:8080/graphql");
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		'Content-Type: application/json',
+		'Content-Length: '.strlen($data_string),
+		'Accept: application/json)'
+	));
+
+	return curl_exec($ch);
 }
 
-function hasMessages() {
-	global $messages;
-	return $messages != "";
-}
-
-function getMessages() {
-	global $messages;
-	return $messages;
-}
-function connect() {
-	global $mysqli;
-        require 'config/info.php';
-	if( isset( $mysqli ) ) {
-		return;
-	} 
-
-	$mysqli = new mysqli("localhost", $user, $pwd, $db);
-	
-	$mysqli->query("SET NAMES 'utf8'");
-	if ($mysqli->connect_errno) {
-    		echo "MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-		return null;
-	} 
-	//echo $mysqli->host_info . "<br>\n";
-	return $mysqli;
-}
-
+// echo(getGraphQL("{lines{info}}"));
 
 function getUsers() {
-	global $mysqli;
-	connect();
-	$sql = "SELECT users.name AS name, clubs.name AS clubname, users.id AS id FROM users JOIN clubs ON club_id=clubs.id";
-	return  $mysqli->query($sql);
+	$query = "
+	{
+		users {
+			name
+			club {
+				name
+			}
+		}
+	}";
+	echo(getGraphQL($query));
+	// $sql = "SELECT users.name AS name, clubs.name AS clubname, users.id AS id FROM users JOIN clubs ON club_id=clubs.id";
 }
+
+// getUsers();
 
 function areFriends( $userId, $friendId ) {
-	global $mysqli;
-	connect();
-
-	$sql = "SELECT * FROM friends WHERE user1=$userId AND user2=$friendId";
-	$result = $mysqli->query($sql);
-        return( mysqli_num_rows($result) != 0 );
+	$query = "
+	{
+		getUser(userId = $userId) {
+			friends {
+				id
+			}
+		}	
+	}";
+	echo(getGraphQL($query));
+	// $sql = "SELECT * FROM friends WHERE user1=$userId AND user2=$friendId";
+	// return( mysqli_num_rows($result) != 0 );
 }
+
+areFriends(0,12);
 
 function addFriend( $userId, $email ) {
 	global $mysqli;
