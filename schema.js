@@ -121,6 +121,7 @@ const typeDefs = `
         galleries: [Gallery]
 
         # Queries with parameters
+        getUser(userId: Int!): [User]
         # queryname(parameter1: String!, parameter2: Int!): [User]
     }
 
