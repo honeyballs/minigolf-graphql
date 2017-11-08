@@ -124,7 +124,10 @@ const typeDefs = `
 
         # Queries with parameters
         getUser(userId: Int!): [User]
-        getHosts()
+        
+        #TODO:
+        #getCourseUserScores(courseId: Int!, userId: Int!): [date, username, courseId]
+
         # queryname(parameter1: String!, parameter2: Int!): [User]
     }
 
