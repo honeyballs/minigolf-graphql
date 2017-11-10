@@ -21,6 +21,7 @@ export default async()=>{
   const Rounds = db.collection('round')
   const Holes = db.collection('hole')
   const Lines = db.collection('line')
+  const Galleries = db.collection('gallery')
 
   //trasnform _id from  an ObjectId into a string
   const prepare = (o) =>{
@@ -82,7 +83,6 @@ export default async()=>{
     Query: {
       //Define the resolver for the queries
 
-      //Resolver to get all users
       users:async (_, params) => {
         return (await User.find({}).toArray()).map(prepare)
       },
@@ -103,6 +103,9 @@ export default async()=>{
       },
       lines :async (_, params) => {
         return (await Lines.find({}).toArray()).map(prepare)
+      },
+      galleries :async (_, params) => {
+        return (await Galleries.find({}).toArray()).map(prepare)
       },
     },
     Mutation: {
@@ -126,6 +129,10 @@ export default async()=>{
         const res = await Clubs.insert(args)
         return (res && res.result && res.result.ok)
       },
+      createGallery: async(root, args, context, info) => {
+        const res = await Galleries.insert(args)
+        return (res && res.result && res.result.ok)
+      },
       createRound: async(root, args, context, info) => {
         args.user = args.userId
         args.userId = undefined
@@ -140,25 +147,34 @@ export default async()=>{
         const res = await Holes.insert(args)
         return (res && res.result && res.result.ok)
       },
-      addFriend: async(root, args, context, info) => {
-        const res = await User.findOne({_id:ObjectId(args.id)})
-        if(!res) return false;
-        const link = await User.findOne({email: args.email})
-        if(!link) return false;
-        return User.updateOne({_id:ObjectId(args.id)}, {$push: {friends: link._id.toString()}})
-      },
       createLine: async(root, args, context, info) => {
         args.type = args.courseTypeId
         args.courseTypeId = undefined
         const res = await Lines.insert(args)
         return (res && res.result && res.result.ok)
       },
+      addFriend: async(root, args, context, info) => {
+        const link = await User.findOne({email: args.email})
+        if(!link) return false;
+        const res = await User.updateOne({_id:ObjectId(args.id)}, {$push: {friends: link._id.toString()}})
+        return (res && res.result && res.result.ok && res.result.n)
+      },
       addLineForCourse: async(root, args, context, info) => {
-        const res = await Course.findOne({_id:ObjectId(args.courseId)})
-        if(!res) return false;
         const link = await Lines.findOne({_id: ObjectId(args.lineId)})
         if(!link) return false;
-        return Course.updateOne({_id:ObjectId(args.courseId)}, {$push: {lines: link._id.toString()}})
+        const res = await Course.updateOne({_id:ObjectId(args.courseId)}, {$push: {lines: link._id.toString()}})
+        return (res && res.result && res.result.ok && res.result.n)
+      },
+      deleteRound: async(root, args, context, info) => {
+        let r = await Rounds.remove({_id: ObjectId(args.roundId)})
+        if(!r || !r.result || !r.result.n) return false
+        //delete relations
+        let rel = await Holes.remove({round: args.roundId})
+        return true
+      },
+      deleteLineFromCourse: async(root, args, context, info) => {
+        const res = await Course.updateOne({_id:ObjectId(args.courseId)}, {$pull: {lines: args.lineId}})
+        return (res && res.result && res.result.ok && res.result.n)
       },
     },
     LONG: GraphQLLong,
