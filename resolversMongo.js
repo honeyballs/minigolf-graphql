@@ -47,16 +47,44 @@ export default async()=>{
         return getArrayRelation(user.friends, User)
       },
       club:async(user) => {
-        return getSingleRelation(user.clubs, Clubs) //vllt eher user.clubs[0]?
+        return getSingleRelation(user.clubs, Clubs)
       },
+    },
+    Course: {
+       type(course) {
+         return getSingleRelation(course.type, Coursetype)
+       },
+      lines(course) {
+        return getArrayRelation(course.lines, Lines)
+      }
+    },
+    Round: {
+      user(round) {
+        return getSingleRelation(round.user, User)
+      },
+      course(round) {
+        return getSingleRelation(round.course, Course)
+      }
+    },
+    Hole: {
+      round(hole) {
+        return getSingleRelation(hole.round, Rounds)
+      }
+    },
+    Line: {
+      courses(line) {
+        return getArrayRelation(line.courses, Course)
+      },
+      type(line) {
+        return getSingleRelation(line.type, Coursetype)
+      }
     },
     Query: {
       //Define the resolver for the queries
 
       //Resolver to get all users
       users:async (_, params) => {
-        let result = (await User.find({}).toArray()).map(prepare)
-        return result
+        return (await User.find({}).toArray()).map(prepare)
       },
       clubs:async (_, params) => {
         return (await Clubs.find({}).toArray()).map(prepare)
@@ -65,17 +93,7 @@ export default async()=>{
         return (await Coursetype.find({}).toArray()).map(prepare)
       },
       courses :async (_, params) => {
-        let result = (await Course.find({}).toArray()).map(prepare)
-        result = await Promise.all(result.map(async(i)=>{
-          if(i.type && i.type[0]) i.type[0] = await Coursetype.findOne({_id: ObjectId(i.type[0])})
-          // i.lines = (await Promise.all(i.lines.map(async f=>{
-          //   let o = await Lines.findOne({_id: ObjectId(f)})
-          //   return o
-          // }))).filter(i=>{return i!=null})
-          i.lines = this.lines()[0]
-          return i
-        }))
-        return result
+        return (await Course.find({}).toArray()).map(prepare)
       },
       rounds :async (_, params) => {
         return (await Rounds.find({}).toArray()).map(prepare)
@@ -84,14 +102,7 @@ export default async()=>{
         return (await Holes.find({}).toArray()).map(prepare)
       },
       lines :async (_, params) => {
-        let result = (await Lines.find({}).toArray()).map(prepare)
-        result = await Promise.all(result.map(async(i)=>{
-          if(!i.type || !i.type[0]) return i
-          i.type[0] = await Coursetype.findOne({_id: ObjectId(i.type[0])})
-          console.log(i.type[0])
-          return i
-        }))
-        return result
+        return (await Lines.find({}).toArray()).map(prepare)
       },
     },
     Mutation: {
@@ -106,10 +117,8 @@ export default async()=>{
         return (res && res.result && res.result.ok)
       },
       createCourse: async(root, args, context, info) => {
-        args.type = []
-        args.type.push(args.courseTypeId)
+        args.type = args.courseTypeId
         args.courseTypeId = undefined
-        args.lines = []
         const res = await Course.insert(args)
         return (res && res.result && res.result.ok)
       },
@@ -118,10 +127,16 @@ export default async()=>{
         return (res && res.result && res.result.ok)
       },
       createRound: async(root, args, context, info) => {
+        args.user = args.userId
+        args.userId = undefined
+        args.course = args.courseId
+        args.courseId = undefined
         const res = await Rounds.insert(args)
         return (res && res.result && res.result.ok)
       },
       createHole: async(root, args, context, info) => {
+        args.round = args.roundId
+        args.roundId = undefined
         const res = await Holes.insert(args)
         return (res && res.result && res.result.ok)
       },
@@ -133,10 +148,8 @@ export default async()=>{
         return User.updateOne({_id:ObjectId(args.id)}, {$push: {friends: link._id.toString()}})
       },
       createLine: async(root, args, context, info) => {
-        args.type = []
-        args.type.push(args.courseTypeId)
+        args.type = args.courseTypeId
         args.courseTypeId = undefined
-        args.courses = []
         const res = await Lines.insert(args)
         return (res && res.result && res.result.ok)
       },
