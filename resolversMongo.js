@@ -28,13 +28,26 @@ export default async()=>{
     return o
   }
 
+  const getArrayRelation = async (src, target) => {
+    if(!src) return null
+    let obj_ids = src.map(id=>ObjectId(id))
+    let r = (await target.find({_id: {$in: obj_ids}}).toArray()).map(prepare)
+    return r
+  }
+
+  const getSingleRelation = async (src, target) => {
+    if(!src) return null
+    let r = (await target.findOne({_id: ObjectId(src)}))
+    return [r]
+  }
+
   return {
     User: {
       friends:async(user) => {
-        if(!user.friends) return null
-        let params = {id: user.friends[0]}
-        let u = await User.findOne({_id: ObjectId(params.id)})
-        return [u]
+        return getArrayRelation(user.friends, User)
+      },
+      club:async(user) => {
+        return getSingleRelation(user.clubs, Clubs) //vllt eher user.clubs[0]?
       },
     },
     Query: {
@@ -43,14 +56,6 @@ export default async()=>{
       //Resolver to get all users
       users:async (_, params) => {
         let result = (await User.find({}).toArray()).map(prepare)
-        // result = await Promise.all(result.map(async(i)=>{
-        //   if(!i.friends) return i
-        //   i.friends = (await Promise.all(i.friends.map(async f=>{
-        //     let o = await User.findOne({_id: ObjectId(f)})
-        //     return o
-        //   }))).filter(i=>{return i!=null})
-        //   return i
-        // }))
         return result
       },
       clubs:async (_, params) => {
