@@ -123,7 +123,7 @@ const typeDefs = `
         galleries: [Gallery]
 
         # Queries with parameters
-        getUser(userId: Int!): [User]
+        getUser(userId: String!): [User]
         
         #TODO:
         #getCourseUserScores(courseId: Int!, userId: Int!): [date, username, courseId]

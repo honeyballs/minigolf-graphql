@@ -98,7 +98,8 @@ export default async function() {
         return getAllRecords(driver,params,"Gallery")
       },
       async getUser(_, params) {
-        let result = await executeQuery(driver, params, `
+        const paramsWithIntId = {...params, userId: parseInt(params.userId)}
+        let result = await executeQuery(driver, paramsWithIntId, `
           MATCH (name:User) WHERE ID(name) = $userId RETURN name
         `)
         return result
