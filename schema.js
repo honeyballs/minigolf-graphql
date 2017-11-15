@@ -2,8 +2,8 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 //Import resolvers
-import getResolvers from './resolversMongo';
-//import getResolvers from './resolversGraph';
+//import getResolvers from './resolversMongo';
+import getResolvers from './resolversGraph';
 
 //Example schema
 /*
@@ -134,11 +134,11 @@ const typeDefs = `
     # Define CRUD operations
     type Mutation {
         # Inserts, generate ids in resolver/via auto_increment
-        createRound(userId: String!, courseId: String!, date: LONG): Boolean
-        createHole(roundId: String!, hole: Int, strokes: Int): Boolean
+        createRound(userId: String!, courseId: String!, date: LONG!): Boolean
+        createHole(roundId: String!, hole: Int!, strokes: Int): Boolean
         registerUser(email: String!, name: String!, passwordHash: String!): Boolean
         # zu user automatisch: id generieren, regkey, logins auf 0 setzen, registration timestamp, beziehung zu club bzw. club id
-        createGallery(image: String, text: String): Boolean
+        createGallery(image: String!, text: String!): Boolean
         createCourse(name: String!, breitengrad: Float, laengengrad: Float, info: String, courseTypeId: String!): Boolean
         createCourseType(type: String!): Boolean
         createClub(name: String!): Boolean

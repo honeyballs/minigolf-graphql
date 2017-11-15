@@ -127,13 +127,14 @@ export default async function() {
           }) RETURN CASE WHEN ct IS NULL THEN false ELSE true END`)
       },
       async createCourse(_, params) {
-        return setMutation(driver,params,`
+        const paramsWithIntId = {...params, courseTypeId: parseInt(params.courseTypeId)}
+        return setMutation(driver,paramsWithIntId,`
           MATCH (ct:Coursetype) WHERE ID(ct) = $courseTypeId
           CREATE (course:Course {
-            name: $name,
-            breitengrad: $breitengrad,
-            laengengrad: $laengengrad,
-            info: $info
+            name: $name
+            ${paramsWithIntId.breitengrad ? ", breitengrad: $breitengrad " : ""}
+            ${paramsWithIntId.laengengrad ? ", laengengrad: $laengengrad ": ""}
+            ${paramsWithIntId.info ? ", info: $info " : ""}
           })-[:TYPE_OF]->(ct) RETURN CASE WHEN course IS NULL THEN false ELSE true END`)
       },
       async createClub(_, params) {
@@ -151,7 +152,8 @@ export default async function() {
           RETURN CASE WHEN gallery IS NULL THEN false ELSE true END`)
       },
       async createRound(_, params) {
-        return setMutation(driver,params,`
+        const paramsWithIntId = {...params, userId: parseInt(params.userId), courseId: parseInt(params.courseId)}        
+        return setMutation(driver,paramsWithIntId,`
           MATCH (u:User) WHERE ID(u) = $userId
           MATCH (c:Course) WHERE ID(c) = $courseId
           CREATE (round:Round {
@@ -161,16 +163,18 @@ export default async function() {
           RETURN CASE WHEN round IS NULL THEN false ELSE true END`)
       },
       async createHole(_, params) {
-        return setMutation(driver,params,`
+        const paramsWithIntId = {...params, roundId: parseInt(params.roundId)}        
+        return setMutation(driver,paramsWithIntId,`
           MATCH (r:Round) WHERE ID(r) = $roundId
           CREATE (hole:Hole {
-            hole: $hole,
-            strokes: $strokes
+            hole: $hole
+            ${params.strokes ? ", strokes: $strokes" : ""}
           })-[:PLAYED_IN]->(r)
           RETURN CASE WHEN hole IS NULL THEN false ELSE true END`)
       },
       async createLine(_, params) {
-        return setMutation(driver,params,`
+        const paramsWithIntId = {...params, courseTypeId: parseInt(params.courseTypeId)}        
+        return setMutation(driver,paramsWithIntId,`
           MATCH (ct:Coursetype) WHERE ID(ct) = $courseTypeId
           CREATE (line:Line {
             name: $name,
@@ -179,26 +183,30 @@ export default async function() {
           RETURN CASE WHEN line IS NULL THEN false ELSE true END`)
       },
       async addFriend(_, params) {
-        return setMutation(driver,params,`
+        const paramsWithIntId = {...params, id: parseInt(params.id)}        
+        return setMutation(driver,paramsWithIntId,`
           MATCH (u:User) WHERE ID(u) = $id
           MATCH (friend:User {email: $email})
           CREATE (u)-[:IS_FRIEND]->(friend)`)
       },
       async addLineForCourse(_, params) {
-        return setMutation(driver,params,`
+        const paramsWithIntId = {...params, courseId: parseInt(params.courseId), lineId: parseInt(params.lineId)}        
+        return setMutation(driver,paramsWithIntId,`
           MATCH (c:Course) WHERE ID(c) = $courseId
           MATCH (l:Line) WHERE ID(l) = $lineId
           CREATE (c)-[:IN_COURSE]->(l)`)
       },
       // does delete always return null?
       async deleteRound(_,params) {
-        return setMutation(driver,params,`
+        const paramsWithIntId = {...params, roundId: parseInt(params.roundId), userId: parseInt(params.userId)}        
+        return setMutation(driver,paramsWithIntId,`
           MATCH (round:Round)-[:PLAYED_BY]->(u:User) WHERE ID(round) = $roundId AND ID(u) = $userId
           DETACH DELETE round
           RETURN CASE WHEN round IS NULL THEN false ELSE true END`)
       },
       async deleteLineFromCourse(_,params) {
-        return setMutation(driver,params,`
+        const paramsWithIntId = {...params, courseId: parseInt(params.courseId), lineId: parseInt(params.lineId)}        
+        return setMutation(driver,paramsWithIntId,`
           MATCH (c:Course)-[relation:IN_COURSE]->(l:Line) WHERE ID(c) = $courseId AND ID(l) = $lineId
           DETACH DELETE relation
           RETURN CASE WHEN relation IS NULL THEN false ELSE true END`)
@@ -242,6 +250,7 @@ async function resolveTypes(driver, params, parentType, relationName, childType)
 }
 
 async function setMutation(driver,params,query) {
+  console.log(query)
     let session = driver.session();
     let result = await session.run(query, params)
     session.close();
