@@ -2,8 +2,8 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 //Import resolvers
-//import getResolvers from './resolversMongo';
-import getResolvers from './resolversGraph';
+import getResolvers from './resolversMongo';
+//import getResolvers from './resolversGraph';
 
 //Example schema
 /*
@@ -134,28 +134,28 @@ const typeDefs = `
     # Define CRUD operations
     type Mutation {
         # Inserts, generate ids in resolver/via auto_increment
-        createRound(userId: Int!, courseId: Int!, date: LONG): Boolean
-        createHole(roundId: Int!, hole: Int, strokes: Int): Boolean
+        createRound(userId: String!, courseId: String!, date: LONG): Boolean
+        createHole(roundId: String!, hole: Int, strokes: Int): Boolean
         registerUser(email: String!, name: String!, passwordHash: String!): Boolean
         # zu user automatisch: id generieren, regkey, logins auf 0 setzen, registration timestamp, beziehung zu club bzw. club id
         createGallery(image: String, text: String): Boolean
-        createCourse(name: String!, breitengrad: Float, laengengrad: Float, info: String, courseTypeId: Int!): Boolean
+        createCourse(name: String!, breitengrad: Float, laengengrad: Float, info: String, courseTypeId: String!): Boolean
         createCourseType(type: String!): Boolean
         createClub(name: String!): Boolean
 
-        createLine(name: String!, info: String!, courseTypeId: Int!): Boolean
+        createLine(name: String!, info: String!, courseTypeId: String!): Boolean
 
         # Connect tables
-        addFriend(id: Int!, email: String!): Boolean
-        addLineForCourse(courseId: Int!, lineId: Int!): Boolean
+        addFriend(id: String!, email: String!): Boolean
+        addLineForCourse(courseId: String!, lineId: String!): Boolean
 
         # Update
         # Unterschied: addLineForCourse - setLine ?
-        setLine(courseId: Int!, lineId: Int!): Boolean # Beziehung setzen zwischen courses und lines
+        setLine(courseId: String!, lineId: String!): Boolean # Beziehung setzen zwischen courses und lines
 
         # Delete
-        deleteRound(roundId: Int!, userId: Int!): Boolean
-        deleteLineFromCourse(lineId: Int!, courseId: Int!): Boolean
+        deleteRound(roundId: String!, userId: String!): Boolean
+        deleteLineFromCourse(lineId: String!, courseId: String!): Boolean
     }
 
     schema {
@@ -170,4 +170,4 @@ export default async () => {
         typeDefs: typeDefs,
         resolvers
     });
-} 
+}
