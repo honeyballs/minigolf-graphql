@@ -2,8 +2,8 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 //Import resolvers
-//import getResolvers from './resolversMongo';
-import getResolvers from './resolversGraph';
+import getResolvers from './resolversMongo';
+//import getResolvers from './resolversGraph';
 
 //Example schema
 /*
@@ -100,7 +100,7 @@ const typeDefs = `
         id: ID!
         name: String
         info: String
-        courses: [Course]
+        #courses: [Course]
         type: [Coursetype]
     }
 
@@ -116,6 +116,7 @@ const typeDefs = `
         users: [User]
         clubs: [Club]
         courses: [Course]
+        
         coursetypes: [Coursetype]
         rounds: [Round]
         holes: [Hole]
@@ -123,11 +124,19 @@ const typeDefs = `
         galleries: [Gallery]
 
         # Queries with parameters
-        getUser(userId: String!): [User]
+        getCourse(courseId: String!): [Course]
         
-        #TODO:
+        #Unused Queries - Defined but not implemented
+        #areFriends(userId: String!, friendId: String!) [User]
+        #getCourseScores(courseId: String!): [Course]
+        #getCourseByUser(userId: String!): [Course]
+        #getUserByLogin(email: String!, passwordHash: String!): [User]
+        #getUserById(userId: String!): [User]
+        #getRoundsForUser(userId: String!): [Round]
         #getCourseUserScores(courseId: Int!, userId: Int!): [date, username, courseId]
+        #getHoles(roundId: String!): [Hole]
 
+        
         # queryname(parameter1: String!, parameter2: Int!): [User]
     }
 
@@ -147,11 +156,11 @@ const typeDefs = `
 
         # Connect tables
         addFriend(id: String!, email: String!): Boolean
-        addLineForCourse(courseId: String!, lineId: String!): Boolean
+        addLineForCourse(courseId: String!, position: String!, lineId: String!): Boolean
 
         # Update
-        # Unterschied: addLineForCourse - setLine ?
-        setLine(courseId: String!, lineId: String!): Boolean # Beziehung setzen zwischen courses und lines
+        # setLine ändert den Typ der Bahn
+        setLine(courseId: String!, position: Int!, lineId: String!): Boolean # Beziehung setzen zwischen courses und lines
 
         # Delete
         deleteRound(roundId: String!, userId: String!): Boolean
