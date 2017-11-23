@@ -148,7 +148,6 @@ function createCourse($name, $breite, $laenge, $typ, $info) {
             createCourse(name: \"$name\", breitengrad: $breite, laengengrad: $laenge, info: \"$info\", courseTypeId: \"$typ\")
         }
     }";
-    debug($query);
     return getGraphQL($query);
 
     global $mysqli;
