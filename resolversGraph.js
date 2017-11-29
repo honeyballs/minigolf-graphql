@@ -60,10 +60,10 @@ export default async function() {
       }
     },
     Line: {
-      async courses(line) {
-        let params = {id: line.id}
-        return resolveTypes(driver, params, "Line", "IN_COURSE", "Course")
-      },
+      // async courses(line) {
+      //   let params = {id: line.id}
+      //   return resolveTypes(driver, params, "Line", "IN_COURSE", "Course")
+      // },
       async type(line) {
         let params = {id: line.id}
         return resolveTypes(driver, params, "Line", "TYPE_OF", "Coursetype")
@@ -97,13 +97,13 @@ export default async function() {
       async galleries(_, params) {
         return getAllRecords(driver,params,"Gallery")
       },
-      async getUser(_, params) {
-        const paramsWithIntId = {...params, userId: parseInt(params.userId)}
-        let result = await executeQuery(driver, paramsWithIntId, `
-          MATCH (name:User) WHERE ID(name) = $userId RETURN name
-        `)
-        return result
-      },
+      // async getUser(_, params) {
+      //   const paramsWithIntId = {...params, userId: parseInt(params.userId)}
+      //   let result = await executeQuery(driver, paramsWithIntId, `
+      //     MATCH (name:User) WHERE ID(name) = $userId RETURN name
+      //   `)
+      //   return result
+      // },
     },
     Mutation: {
       async registerUser(_, params) {
