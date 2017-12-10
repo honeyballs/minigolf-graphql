@@ -6,7 +6,7 @@ First install Node.js and at least one of the following database clients:
 
 * [Node.js](https://nodejs.org/en/)
 * [Neo4j](https://neo4j.com/download/)
-* //Insert mongo client
+* [MongoDB](https://www.mongodb.com/download-center)
 
 ## Set up the server
 
