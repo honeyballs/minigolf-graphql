@@ -148,12 +148,26 @@ import {MongoClient, ObjectId} from 'mongodb'
                 return (res && res.result && res.result.ok)
             },
             createCourse: async(root, args, context, info) => {
-                
-                //TODO adds empty course
-                args.type = args.courseTypeId
+                var coursetype = (await Coursetype.find({id: args.courseTypeId}).toArray()).map(prepare)
+                console.log("_____COURSETYPE_____")
+                    console.log(coursetype)
+                    args.type = ObjectId(coursetype._id).toString()
+                    console.log(args.type)
+                    
+                //args.type = await Course.find({id: args.courseTypeId}).toArray()).map(prepare)
                 args.courseTypeId = undefined
+                                
+                var courses = await Course.find({}).toArray()
+                console.log("________COURSES_____")
+                console.log(courses)
+                console.log("________LENGTH______")
+                var length = courses.length+1
+                console.log(length)
+                
+                args.id = length
+                console.log(args)
                 const res = await Course.insert(args)
-                cosole.log(res)
+                //console.log(res)
                 return (res && res.result && res.result.ok)
             },
             createClub: async(root, args, context, info) => {

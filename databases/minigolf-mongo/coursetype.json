@@ -1,0 +1,5 @@
+{ "_id" : { "$oid" : "5a04d7f0007fee0490c56630" }, "id" : "1", "type" : "Beton" }
+{ "_id" : { "$oid" : "5a04d7f5007fee0490c56631" }, "id" : "2", "type" : "Eternit" }
+{ "_id" : { "$oid" : "5a11f056e87bdee5590a8fa9" }, "id" : "0", "type" : "???" }
+{ "_id" : { "$oid" : "5a11f06ae87bdee5590a8fb1" }, "id" : "3", "type" : "Adventure" }
+{ "_id" : { "$oid" : "5a11f073e87bdee5590a8fb5" }, "id" : "4", "type" : "Stern" }

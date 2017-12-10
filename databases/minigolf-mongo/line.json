@@ -1,0 +1,2 @@
+{ "_id" : { "$oid" : "5a1344e010e66802e2df0fbc" }, "id" : "1", "name" : "String!", "info" : "String!", "courses" : ["5a04da43007fee0490c56635", "5a04da47007fee0490c56636"], "type" : "5a04d7f0007fee0490c56630" }
+{ "_id" : { "$oid" : "5a15e64f2a5e38031475b198" }, "id" : "2", "name" : "Netz", "info" : "Motherfuckin´ Netz", "type" : "5a04d7f0007fee0490c56630" }
