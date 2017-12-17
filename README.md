@@ -8,6 +8,8 @@ First install Node.js and at least one of the following database clients:
 * [Neo4j](https://neo4j.com/download/)
 * [MongoDB](https://www.mongodb.com/download-center)
 
+It is highly recommended to also run a MySQL instance so all of the minigolf applications functionalities can be fully appreciated.
+
 ## Set up the server
 
 Make sure one of the database clients is running. You can find the databases inside the databases folder. 
@@ -34,3 +36,10 @@ To learn more about GraphQL queries and mutations visit the [GraphQL docs](http:
 
 
 
+## Import MongoDB
+
+All collections can be found in the databases/minigolf-mongo folder in both a .json and the more reliable .bson format.
+
+Use the following commandline program shipped with MongoDB to import the collections.
+
+mongorestore -d minigolf -c collection_name path/file.bson
